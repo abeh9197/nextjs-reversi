@@ -8,7 +8,7 @@ import styles from '../styles/ReversiBoard.module.css'; // CSSモジュールを
 interface ReversiBoardProps {
   board: Board;
   game: ReversiGame;
-  onMove: (row: number, col: number) => void; // ゲームの状態を更新する関数
+  onMove: (row: number, col: number) => void;
 }
 
 const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove }) => {
@@ -26,7 +26,7 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
 
   const handleClick = (row: number, col: number) => {
     if (game.isValidMove(row, col, game.getCurrentPlayer())) {
-      onMove(row, col); // ゲームの状態を更新する
+      onMove(row, col);
     }
   };
 
