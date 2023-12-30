@@ -3,7 +3,7 @@
 import React, { useState, memo } from 'react';
 import { Board, Cell } from '../types/GameTypes';
 import { ReversiGame } from '../lib/ReversiGame';
-import styles from '../styles/ReversiBoard.module.css'; // CSSモジュールをインポート
+import styles from '../styles/ReversiBoard.module.css';
 
 interface ReversiBoardProps {
   board: Board;
@@ -40,23 +40,23 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
   };
 
   return (
-    <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: `repeat(${board.length}, 50px)`, 
+    <div style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${board.length}, 50px)`,
         gridTemplateRows: `repeat(${board.length}, 50px)`,
-        gap: '5px', 
-        justifyContent: 'center', 
-        margin: '20px auto' 
+        gap: '5px',
+        justifyContent: 'center',
+        margin: '20px auto'
     }}>
       {board.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const isHighlighted = highlightedCell && highlightedCell[0] === rowIndex && highlightedCell[1] === colIndex;
           return (
-            <div 
-              key={`${rowIndex}-${colIndex}`} 
-              style={{ 
-                width: '50px', 
-                height: '50px', 
+            <div
+              key={`${rowIndex}-${colIndex}`}
+              style={{
+                width: '50px',
+                height: '50px',
                 backgroundColor: isHighlighted ? 'lightblue' : 'green',
                 border: '1px solid black',
                 display: 'flex',

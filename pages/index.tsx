@@ -6,17 +6,16 @@ import { ReversiGame } from '../lib/ReversiGame';
 import { Cell } from '../types/GameTypes';
 
 const Home: React.FC = () => {
-  const [game, setGame] = useState(new ReversiGame());
+    const [game, setGame] = useState(new ReversiGame());
 
-  useEffect(() => {
-    setGame(new ReversiGame());
-  }, []);
-
-  const handleMove = (row: number, col: number) => {
-    // ゲームの状態を更新するロジック
-    // 例: game.makeMove(row, col);
-    setGame({ ...game }); // ステートを更新してリレンダリングをトリガー
-  };
+    const handleMove = (row: number, col: number) => {
+      console.log("index: handleMove")
+      if (game.isValidMove(row, col, game.getCurrentPlayer())) {
+        const newGame = new ReversiGame();
+        newGame.makeMove(row, col, game.getCurrentPlayer())
+        setGame(newGame);
+      }
+    };
 
   return (
     <div>

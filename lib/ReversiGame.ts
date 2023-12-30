@@ -1,12 +1,12 @@
-// ReversiGame.ts
+// lib/ReversiGame.ts
 
-import { Cell, Board, GameState } from '../types/GameTypes'
+import { Cell, Board, GameState } from '../types/GameTypes';
 
 export class ReversiGame {
     private state: GameState;
 
-    constructor() {
-        this.state = this.initializeGame();
+    constructor(initialState?: GameState) {
+        this.state = initialState ?? this.initializeGame();
     }
 
     private initializeGame(): GameState {
@@ -29,6 +29,7 @@ export class ReversiGame {
 
     public isValidMove(row: number, col: number, player: Cell): boolean {
         if (this.state.board[row][col] !== Cell.Empty) {
+            console.log("Clicked cell is not empty.")
             return false;
         }
 
@@ -43,7 +44,7 @@ export class ReversiGame {
                 return true;
             }
         }
-
+        console.log("isValidMove is returning false.")
         return false;
     }
 
