@@ -1,6 +1,6 @@
 // components/ReversiBoard.tsx
 
-import React, { useState, memo } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { Board, Cell } from '../types/GameTypes';
 import { ReversiGame } from '../lib/ReversiGame';
 import styles from '../styles/ReversiBoard.module.css';
@@ -13,6 +13,11 @@ interface ReversiBoardProps {
 
 const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove }) => {
   const [highlightedCell, setHighlightedCell] = useState<[number, number] | null>(null);
+  const [previousBoard, setPreviousBoard] = useState<Board>(board);
+
+  useEffect(() => {
+    setPreviousBoard(board);
+  }, [board]);
 
   const handleMouseEnter = (row: number, col: number) => {
     if (game.isValidMove(row, col, game.getCurrentPlayer())) {
@@ -39,6 +44,38 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
     };
   };
 
+  const getStoneClasses = (cell: Cell, rowIndex: number, colIndex: number) => {
+    let classes = styles.stone;
+    if (cell !== Cell.Empty && previousBoard[rowIndex][colIndex] !== Cell.Empty && cell !== previousBoard[rowIndex][colIndex]) {
+      classes += ` ${styles.flip}`;
+    }
+    return classes;
+  };
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    if (!game.hasValidMove(game.getCurrentPlayer())) {
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2000); // 2秒後に非表示
+    }
+  }, [game, board]);
+
+  const showTestPass = () => {
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 2000); // 2秒後に非表示
+  };
+
+  const handleAutoPlay = () => {
+    const intervalId = setInterval(() => {
+      game.placeRandomStone();
+      onMove();
+      if (game.isGameOver()) {
+        clearInterval(intervalId);
+      }
+    }, 100);
+  };
+
   return (
     <div style={{
         display: 'grid',
@@ -48,6 +85,13 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
         justifyContent: 'center',
         margin: '20px auto'
     }}>
+      <div className={styles.buttonContainer}>
+        <button className={styles.button} onClick={handleAutoPlay}>自動プレイ開始</button>
+        <button className={styles.button} onClick={showTestPass}>（テスト用）パスボタン表示</button>
+      </div>
+      {showPopup && <div className={styles.popup + (showPopup ? ` ${styles.show}` : '')}>
+        パス！
+      </div>}
       {board.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const isHighlighted = highlightedCell && highlightedCell[0] === rowIndex && highlightedCell[1] === colIndex;
@@ -67,7 +111,9 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
               onMouseLeave={handleMouseLeave}
               onClick={() => handleClick(rowIndex, colIndex)}
             >
-              {cell !== Cell.Empty && <div className={styles.stone} style={getStoneStyle(cell)}></div>}
+              {cell !== Cell.Empty && (
+                <div className={getStoneClasses(cell, rowIndex, colIndex)} style={getStoneStyle(cell)}></div>
+              )}
             </div>
           );
         })

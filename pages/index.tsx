@@ -9,10 +9,9 @@ const Home: React.FC = () => {
     const [game, setGame] = useState(new ReversiGame());
 
     const handleMove = (row: number, col: number) => {
-      console.log("index: handleMove")
       if (game.isValidMove(row, col, game.getCurrentPlayer())) {
-        const newGame = new ReversiGame();
-        newGame.makeMove(row, col, game.getCurrentPlayer())
+        const newGame = new ReversiGame(game.getGameState());
+        newGame.makeMove(row, col, game.getCurrentPlayer());
         setGame(newGame);
       }
     };
