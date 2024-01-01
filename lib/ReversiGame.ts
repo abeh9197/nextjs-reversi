@@ -28,8 +28,11 @@ export class ReversiGame {
     }
 
     public isValidMove(row: number, col: number, player: Cell): boolean {
-        if (row < 0 || row >= this.state.board.length || col < 0 || col >= this.state.board[row].length) {
-          return false;
+        if (row < 0 || row >= this.state.board.length) {
+            return false;
+          }
+        if (col < 0 || col >= this.state.board[row].length) {
+        return false;
         }
         if (this.state.board[row][col] !== Cell.Empty) {
           return false;
@@ -156,4 +159,21 @@ export class ReversiGame {
           this.makeMove(randomCell.row, randomCell.col, this.state.currentPlayer);
         }
       }
+
+      public countStones(): { black: number; white: number } {
+        let black = 0;
+        let white = 0;
+
+        for (const row of this.state.board) {
+          for (const cell of row) {
+            if (cell === Cell.Black) {
+              black++;
+            } else if (cell === Cell.White) {
+              white++;
+            }
+          }
+        }
+
+        return { black, white };
+    }
 }

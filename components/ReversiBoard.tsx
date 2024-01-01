@@ -76,6 +76,14 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
     }, 100);
   };
 
+  useEffect(() => {
+    if (game.isGameOver()) {
+      const { black, white } = game.countStones();
+      const winner = black > white ? "黒の勝利！" : white > black ? "白の勝利！" : "引き分け！";
+      alert(`ゲーム終了！\n\n黒: ${black} 白: ${white}\n\n${winner}`);
+    }
+  }, [game, board]);
+
   return (
     <div style={{
         display: 'grid',
