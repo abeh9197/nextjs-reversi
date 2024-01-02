@@ -84,6 +84,11 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
     }
   }, [game, board]);
 
+  const handleResetGame = () => {
+    game.resetGame();
+    onMove(); // ゲームの状態をリセットした後に盤面を更新するための関数を呼び出す
+  };
+
   return (
     <div style={{
         display: 'grid',
@@ -94,6 +99,7 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
         margin: '20px auto'
     }}>
       <div className={styles.buttonContainer}>
+        <button onClick={handleResetGame}>ゲームをリセット</button>
         <button className={styles.button} onClick={handleAutoPlay}>自動プレイ開始</button>
         <button className={styles.button} onClick={showTestPass}>（テスト用）パスボタン表示</button>
       </div>

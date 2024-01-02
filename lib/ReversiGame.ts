@@ -28,11 +28,8 @@ export class ReversiGame {
     }
 
     public isValidMove(row: number, col: number, player: Cell): boolean {
-        if (row < 0 || row >= this.state.board.length) {
+        if (row < 0 || row >= this.state.board.length || col < 0 || col >= this.state.board[row].length) {
             return false;
-          }
-        if (col < 0 || col >= this.state.board[row].length) {
-        return false;
         }
         if (this.state.board[row][col] !== Cell.Empty) {
           return false;
@@ -175,5 +172,9 @@ export class ReversiGame {
         }
 
         return { black, white };
+    }
+
+    public resetGame(): void {
+        this.state = this.initializeGame();
     }
 }
