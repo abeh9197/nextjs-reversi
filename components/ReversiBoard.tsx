@@ -14,10 +14,11 @@ interface ReversiBoardProps {
 const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove }) => {
   const [highlightedCell, setHighlightedCell] = useState<[number, number] | null>(null);
   const [previousBoard, setPreviousBoard] = useState<Board>(board);
+  const [boardState, setBoardState] = useState(game.getGameState().board);
 
   useEffect(() => {
-    setPreviousBoard(board);
-  }, [board]);
+    setBoardState(game.getGameState().board);
+  }, [game.getGameState()]);
 
   const handleMouseEnter = (row: number, col: number) => {
     if (game.isValidMove(row, col, game.getCurrentPlayer())) {
@@ -66,14 +67,19 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
     setTimeout(() => setShowPopup(false), 2000); // 2秒後に非表示
   };
 
+  const updateBoard = () => {
+    setBoardState(game.getGameState().board);
+  };
+
   const handleAutoPlay = () => {
+    console.log("handleAutoPlay")
     const intervalId = setInterval(() => {
       game.placeRandomStone();
-      onMove();
+      setBoardState(game.getGameState().board);
       if (game.isGameOver()) {
         clearInterval(intervalId);
       }
-    }, 100);
+    }, 1);
   };
 
   useEffect(() => {
@@ -85,8 +91,9 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
   }, [game, board]);
 
   const handleResetGame = () => {
+    console.log("handleResetGame")
     game.resetGame();
-    onMove(); // ゲームの状態をリセットした後に盤面を更新するための関数を呼び出す
+    setBoardState(game.getGameState().board);
   };
 
   return (
