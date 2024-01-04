@@ -1,27 +1,33 @@
-// pages/index.tsx
+// pages/login.tsx
 
-import React, { useState, useEffect } from 'react';
-import ReversiBoard from '../components/ReversiBoard';
-import { ReversiGame } from '../lib/ReversiGame';
-import { Cell } from '../types/GameTypes';
+import React from "react";
+import { GoogleLogin } from 'react-google-login';
+import { useRouter } from "next/router";
 
-const Home: React.FC = () => {
-    const [game, setGame] = useState(new ReversiGame());
+const LoginPage = () => {
+  const router = useRouter();
 
-    const handleMove = (row: number, col: number) => {
-      if (game.isValidMove(row, col, game.getCurrentPlayer())) {
-        const newGame = new ReversiGame(game.getGameState());
-        newGame.makeMove(row, col, game.getCurrentPlayer());
-        setGame(newGame);
-      }
-    };
+  const onSuccess = (res) => {
+    console.log('[Login Success] currentUser:', res.profileObj);
+    router.push('/game');
+  };
+
+  const onFailure = (res) => {
+    console.log('[Login Failed] res:', res);
+  };
 
   return (
     <div>
-      <h1>現在のプレイヤー: {game.getCurrentPlayer() === Cell.Black ? '黒' : '白'}</h1>
-      <ReversiBoard board={game.getGameState().board} game={game} onMove={handleMove} />
+      <h1>Login Page</h1>
+      <GoogleLogin
+        clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+        buttonText="Login with Google"
+        onSuccess={onSuccess}
+        onFailure={onFailure}
+        cookiePolicy={'single_host_origin'}
+      />
     </div>
   );
 };
 
-export default Home;
+export default LoginPage;
