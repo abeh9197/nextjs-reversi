@@ -2,8 +2,10 @@
 
 import { Cell, Board, GameState } from '../types/GameTypes';
 
+
 export class ReversiGame {
     private state: GameState;
+    private onBoardChange: (() => void) | null = null;
 
     constructor(initialState?: GameState) {
         this.state = initialState ?? this.initializeGame();
@@ -11,7 +13,6 @@ export class ReversiGame {
 
     private initializeGame(): GameState {
         const board: Board = Array(8).fill(null).map(() => Array(8).fill(Cell.Empty));
-
         board[3][3] = Cell.White;
         board[4][4] = Cell.White;
         board[3][4] = Cell.Black;
@@ -21,6 +22,10 @@ export class ReversiGame {
             board: board,
             currentPlayer: Cell.Black
         };
+    }
+
+    public setOnBoardChange(callback: (() => void) | null) {
+        this.onBoardChange = callback;
     }
 
     public getGameState(): GameState {
@@ -159,6 +164,7 @@ export class ReversiGame {
           const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
           this.makeMove(randomCell.row, randomCell.col, this.state.currentPlayer);
         }
+        this.onBoardChange?.();
       }
 
       public countStones(): { black: number; white: number } {
@@ -179,7 +185,7 @@ export class ReversiGame {
     }
 
     public resetGame(): void {
-        console.log("resetGame")
         this.state = this.initializeGame();
+        this.onBoardChange?.();
     }
 }

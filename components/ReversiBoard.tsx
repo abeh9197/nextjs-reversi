@@ -14,11 +14,17 @@ interface ReversiBoardProps {
 const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove }) => {
   const [highlightedCell, setHighlightedCell] = useState<[number, number] | null>(null);
   const [previousBoard, setPreviousBoard] = useState<Board>(board);
-  const [boardState, setBoardState] = useState(game.getGameState().board);
+  const [boardState, setBoardState] = useState<Board>(game.getGameState().board);
 
-  useEffect(() => {
+useEffect(() => {
+  const handleBoardChange = () => {
     setBoardState(game.getGameState().board);
-  }, [game.getGameState()]);
+  };
+
+  game.setOnBoardChange(handleBoardChange);
+
+  return () => game.setOnBoardChange(null);
+}, [game]);
 
   const handleMouseEnter = (row: number, col: number) => {
     if (game.isValidMove(row, col, game.getCurrentPlayer())) {
@@ -72,14 +78,12 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
   };
 
   const handleAutoPlay = () => {
-    console.log("handleAutoPlay")
     const intervalId = setInterval(() => {
       game.placeRandomStone();
-      setBoardState(game.getGameState().board);
       if (game.isGameOver()) {
         clearInterval(intervalId);
       }
-    }, 1);
+    }, 10);
   };
 
   useEffect(() => {
@@ -91,7 +95,6 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
   }, [game, board]);
 
   const handleResetGame = () => {
-    console.log("handleResetGame")
     game.resetGame();
     setBoardState(game.getGameState().board);
   };
@@ -99,8 +102,8 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
   return (
     <div style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${board.length}, 50px)`,
-        gridTemplateRows: `repeat(${board.length}, 50px)`,
+        gridTemplateColumns: `repeat(${boardState.length}, 50px)`,
+        gridTemplateRows: `repeat(${boardState.length}, 50px)`,
         gap: '5px',
         justifyContent: 'center',
         margin: '20px auto'
@@ -113,32 +116,29 @@ const ReversiBoard: React.FC<ReversiBoardProps> = memo(({ board, game, onMove })
       {showPopup && <div className={styles.popup + (showPopup ? ` ${styles.show}` : '')}>
         パス！
       </div>}
-      {board.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          const isHighlighted = highlightedCell && highlightedCell[0] === rowIndex && highlightedCell[1] === colIndex;
-          return (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              style={{
-                width: '50px',
-                height: '50px',
-                backgroundColor: isHighlighted ? 'lightblue' : 'green',
-                border: '1px solid black',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleClick(rowIndex, colIndex)}
-            >
-              {cell !== Cell.Empty && (
-                <div className={getStoneClasses(cell, rowIndex, colIndex)} style={getStoneStyle(cell)}></div>
-              )}
-            </div>
-          );
-        })
-      )}
+      {boardState.map((row, rowIndex) => (
+        row.map((cell, colIndex) => (
+          <div
+            key={`${rowIndex}-${colIndex}`}
+            style={{
+              width: '50px',
+              height: '50px',
+              backgroundColor: highlightedCell && highlightedCell[0] === rowIndex && highlightedCell[1] === colIndex ? 'lightblue' : 'green',
+              border: '1px solid black',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => handleClick(rowIndex, colIndex)}
+          >
+            {cell !== Cell.Empty && (
+              <div className={getStoneClasses(cell, rowIndex, colIndex)} style={getStoneStyle(cell)}></div>
+            )}
+          </div>
+        ))
+      ))}
     </div>
   );
 });
