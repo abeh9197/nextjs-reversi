@@ -1,10 +1,8 @@
-// pages/login.tsx
-
 import React from 'react';
+import { AppProps } from 'next/app';
 
-const LoginPage: React.FC = () => {
-  // ログインロジック
-  return <div>Login Page</div>;
-};
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
 
-export default LoginPage;
+export default MyApp;
